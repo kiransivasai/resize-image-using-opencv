@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resize image</title>
+</head>
+<body>
+    <div class="inputoutput">
+        <img hidden id="imageSrc" alt="No Image" />
+        <input type="file" id="fileInput" name="file" />
+    </div>
+    <div class="inputoutput">
+        <canvas id="canvasInput" ></canvas>
+        <canvas id="canvasOutput"></canvas>
+    </div>
+    <div class="resizeImage">
+        <input type="number" placeholder="Enter height" id="height" />
+        <input type="number" placeholder="Enter width" id="width" />
+        <button onclick="resize()">Resize</button>
+    </div>
+
+    <script src="opencv.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        let imgElement = document.getElementById("imageSrc")
+        let inputElement = document.getElementById("fileInput");
+        inputElement.addEventListener("change", (e) => {
+            imgElement.src = URL.createObjectURL(e.target.files[0]);
+        }, false);
+
+        imgElement.onload = function() {
+            let mat = cv.imread(imgElement);
+            cv.imshow('canvasInput', mat);
+            mat.delete();
+        };
+        
+
+        function resize(){
+            let height = parseInt(document.getElementById("height").value);
+            let width = parseInt(document.getElementById("width").value);
+            let src = cv.imread('canvasInput');
+            let dst = new cv.Mat();
+            let dsize = new cv.Size(height,width);
+            cv.resize(src, dst, dsize, 0, 0, cv.INTER_AREA);
+            cv.imshow('canvasOutput', dst);
+            src.delete(); dst.delete();
+        }
+    </script>
+    
+</body>
+</html>
